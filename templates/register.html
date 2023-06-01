@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація</title>
+
+    <style>
+        .Main {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
+        }
+
+        .Main input {
+            border-radius: 2vh;
+            height: 5vh;
+            width: 25vh;
+            text-align: center;
+            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+            font-size: 2vh;
+        }
+
+        .Main button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2vh;
+            height: 5vh;
+            width: 15vh;
+            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+            font-size: 2vh;
+        }
+
+        .Main h1 {
+            display: flex;
+            justify-content: center;
+            font-size: 5vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            text-shadow: 0 0 2rem rgba(0, 0, 0, 1);
+        }
+
+        .Main form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .Main label {
+            margin-bottom: 2vh;
+        }
+
+        .Main a {
+            text-decoration: none;
+            color: white;
+            font-size: 2vh;
+            margin-top: 1vh;
+            text-shadow: 0 0 2rem rgba(0, 0, 0, 1);
+        }
+    </style>
+</head>
+<header>
+
+</header>
+<body class="Main">
+<form method="POST" action="/process-user">
+    <h1>Реєстрація</h1>
+    <label>
+        <input type="email" name="email" placeholder="Введіть пошту">
+    </label>
+    <label>
+        <input type="password" name="password" placeholder="Введіть пароль"/>
+    </label>
+    <input type="hidden" name="type" value="login">
+    <button type="submit">Реєстрація</button>
+</form>
+</body>
+<footer>
+
+</footer>
+</html>
