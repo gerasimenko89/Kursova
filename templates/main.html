@@ -98,29 +98,33 @@
     </style>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.movie-button button');
-            const buyTicketBtn = document.querySelector('.BuyTicket button');
+            const movieContainers = document.querySelectorAll('.movie-card');
 
-            buttons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    button.classList.toggle('active');
-                    updateBuyTicketBtnText();
+            movieContainers.forEach(function(movieContainer) {
+                const buttons = movieContainer.querySelectorAll('.movie-button button');
+                const buyTicketBtn = movieContainer.querySelector('.BuyTicket button');
+
+                buttons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        button.classList.toggle('active');
+                        updateBuyTicketBtnText();
+                    });
                 });
-            });
 
-            function updateBuyTicketBtnText() {
-                const activeButtons = document.querySelectorAll('.movie-button button.active');
-                if (activeButtons.length >= 2) {
-                    buyTicketBtn.textContent = 'Купити квитки';
-                } else {
-                    buyTicketBtn.textContent = 'Купити квиток';
+                function updateBuyTicketBtnText() {
+                    const activeButtons = movieContainer.querySelectorAll('.movie-button button.active');
+                    if (activeButtons.length >= 2) {
+                        buyTicketBtn.textContent = 'Купити квитки';
+                    } else {
+                        buyTicketBtn.textContent = 'Купити квиток';
+                    }
                 }
-            }
+            });
         });
     </script>
 </head>
 <body>
-<h1>Cinema Schedule</h1>
+<h1>Розклад сеансів</h1>
 <div class="movie-container">
     {% for s in schedule %}
     <div class="movie-card">
