@@ -124,16 +124,18 @@
 </header>
 <body>
   <h1>Ваші квитки</h1>
-  <div class="TicketInfo">
-    <!--{Логика}-->
-      <article class="YourTicketInfo">
-        <p>Ваше місце: № <!--{Логика для отображения всех мест куплених на один фильм}--> </p>
-        <p>Дата сеансу: {{ s.date }}</p>
-        <p>Початок: {{ s.start_time }}</p>
-        <p>Кінець: {{ s.end_time }}</p>
+  {% for t in tickets %}
+<div class="TicketInfo">
+   <article class="YourTicketInfo">
+        <p>Назва фільму {{ t.title }}</p>
+        <p>Дата {{ t.date}}</p>
+        <p>Початок {{ t.start_time}}</p>
+        <p>Кінець {{ t.end_time}}</p>
+    <p>Номер місця {{ t.seats}}</p>
       </article>
-    <!--{конец логики}-->
   </div>
+  {% endfor %}
+
 </body>
 <footer>
 

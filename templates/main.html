@@ -2,216 +2,26 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
     <title>Cinema Schedule</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
-        }
-
-        h1 {
-            text-align: center;
-            color: black;
-        }
-
-        .movie-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .movie-card {
-            flex: 0 0 calc(25% - 20px);
-            max-width: calc(25% - 20px);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            background-color: #fafffe;
-            transition: background-image 0.3s ease, transform 0.3s ease;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-
-        .movie-card:hover {
-            background-image: linear-gradient(to bottom right, #5EFCE8, #736EFE);
-            cursor: pointer;
-            transform: scale(1.05);
-
-        }
-
-        .movie-card h2 {
-            font-size: 18px;
-            margin: 0;
-            color: black;
-            text-align: center;
-            padding-bottom: 10px;
-        }
-
-        .movie-card p {
-            margin: 10px 0;
-            color: black;
-        }
-
-        .movie-button {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-
-        }
-
-        .movie-button button {
-            border-radius: 10px;
-            height: 30px;
-            width: 30px;
-            margin: 5px;
-            background-color: white;
-            border-width: 1px;
-        }
-
-        .movie-button button.active {
-            background-color: lightgray;
-        }
-
-        .filmInfo {
-            border-radius: 10px;
-        }
-
-        .filmInfo p {
-            padding-left: 20px;
-            padding-top: 5px;
-            padding-bottom: 5px;
-        }
-
-        .Seats {
-            text-align: center;
-        }
-
-        .BuyTicket {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-top: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .BuyTicket button {
-            border-radius: 10px;
-            border-width: 1px;
-            height: 30px;
-            background-color: white;
-        }
-
-        .BuyTicket:hover {
-            transform: scale(1.05);
-        }
-
-        .burger-menu {
-            display: block;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 999;
-            cursor: pointer;
-        }
-
-        .burger-menu span {
-            display: block;
-            width: 30px;
-            height: 4px;
-            margin-bottom: 5px;
-            background-color: black;
-            transition: transform 0.3s ease;
-        }
-
-        .burger-menu.open span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .burger-menu.open span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .burger-menu.open span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        .menu-items {
-            display: none;
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 998;
-        }
-
-        .menu-items.open {
-            display: block;
-        }
-
-        .menu-items a {
-            display: block;
-            margin-bottom: 10px;
-            color: black;
-            text-decoration: none;
-        }
-
-        @media (max-width: 1200px) {
-            .movie-card {
-                flex: 0 0 calc(50% - 20px);
-                max-width: calc(50% - 20px);
-            }
-            .movie-card h2 {
-                font-size: 20px;
-            }
-            .movie-card p {
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .movie-card {
-                flex: 0 0 calc(100% - 20px);
-                max-width: calc(100% - 20px);
-            }
-            .movie-card h2 {
-                font-size: 20px;
-            }
-            .movie-card p {
-                font-size: 16px;
-            }
-        }
-
-    </style>
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const movieContainers = document.querySelectorAll('.movie-card');
 
-            movieContainers.forEach(function(movieContainer) {
+            movieContainers.forEach(function (movieContainer) {
                 const buttons = movieContainer.querySelectorAll('.movie-button button');
                 const buyTicketBtn = movieContainer.querySelector('.BuyTicket button');
 
-                buttons.forEach(function(button) {
-                    button.addEventListener('click', function() {
+                buttons.forEach(function (button) {
+                    button.addEventListener('click', function () {
                         button.classList.toggle('active');
                         updateBuyTicketBtnText();
                     });
                 });
 
-                movieContainer.addEventListener('mouseleave', function() {
-                    buttons.forEach(function(button) {
+                movieContainer.addEventListener('mouseleave', function () {
+                    buttons.forEach(function (button) {
                         button.classList.remove('active');
                     });
                     updateBuyTicketBtnText();
@@ -228,11 +38,11 @@
             });
         });
 
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const burgerMenu = document.querySelector('.burger-menu');
             const menuItems = document.querySelector('.menu-items');
 
-            burgerMenu.addEventListener('click', function() {
+            burgerMenu.addEventListener('click', function () {
                 burgerMenu.classList.toggle('open');
                 menuItems.classList.toggle('open');
             });
@@ -250,33 +60,43 @@
         <a href="/login">Вхід</a>
         <a href="/register">Реєстрація</a>
         <a href="#">Вихід</a>
-        <a href="#">Профіль</a>
+        <a href="/profile">Профіль</a>
         <a href="/">Головна</a>
     </nav>
 </header>
 <body>
 <h1>Розклад сеансів</h1>
 <div class="movie-container">
+    {{ message }}
     {% for s in schedule %}
-    <div class="movie-card">
-        <h2>{{ s.title }}</h2>
-        <article class="filmInfo">
-            <p>м.Вінниця</p>
-            <p>вул.Хмельницьке шосе, 95</p>
-            <p>{{ s.date }}</p>
-            <p>Початок: {{ s.start_time }}</p>
-            <p>Кінець: {{ s.end_time }}</p>
-        </article>
-        <p class="Seats">Вільні місця</p>
-        <article class="movie-button">
-            {% for seat in s.seats %}
-            <button>{{ seat }}</button>
-            {% endfor %}
-        </article>
-        <article class="BuyTicket">
-            <button>Купити квиток</button>
-        </article>
-    </div>
+        <div class="movie-card">
+            <h2>{{ s.title }}</h2>
+            <article class="filmInfo">
+                <p>м.Вінниця</p>
+                <p>вул.Хмельницьке шосе, 95</p>
+                <p>{{ s.date }}</p>
+                <p>Початок: {{ s.start_time }}</p>
+                <p>Кінець: {{ s.end_time }}</p>
+            </article>
+            <p class="Seats">Вільні місця</p>
+            <form method="POST" action="/buy_ticket/{{ s.id }}">
+                <div style="display: flex; flex-wrap: wrap;">
+                    {% for seat in range(1, 17) %}
+                        {% if seat not in s.seats %}
+                            <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}"
+                                   class="checkbox-button" disabled style="margin-right: 10px;">
+                        {% else %}
+                            <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}"
+                                   class="checkbox-button" style="margin-right: 10px;">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <br>
+                <button type="submit">Купити квиток</button>
+            </form>
+
+
+        </div>
     {% endfor %}
 </div>
 </body>
