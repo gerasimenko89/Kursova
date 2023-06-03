@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Cinema Schedule</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
             margin: 0;
             padding: 20px;
+            background-color: white;
         }
-
         h1 {
             text-align: center;
+            color: black;
         }
 
         .movie-container {
@@ -22,20 +23,50 @@
 
         .movie-card {
             width: 250px;
-            background-color: white;
             border-radius: 10px;
             padding: 20px;
             margin: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            background-color: #fafffe;
         }
 
         .movie-card h2 {
             font-size: 18px;
             margin: 0;
+            color: black;
+            text-align: center;
+            padding-bottom: 10px;
         }
 
         .movie-card p {
             margin: 10px 0;
+            color: black;
+
+        }
+        .movie-button {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .movie-button button {
+            border-radius: 10px;
+            height: 30px;
+            width: 30px;
+            margin: 5px;
+            background-color: white;
+            border-width: 1px;
+        }
+        .filmInfo {
+
+            border-radius: 10px;
+        }
+        .filmInfo p {
+            padding-left: 20px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        .Seats {
+            text-align: center;
         }
     </style>
 </head>
@@ -45,11 +76,17 @@
     {% for s in schedule %}
         <div class="movie-card">
             <h2>{{ s.title }}</h2>
-            <p>{{ s.start_time }}</p>
-            <p>{{ s.end_time }}</p>
-            {% for seat in s.seats %}
-                <p>{{ seat }}</p>
-            {% endfor %}
+            <article class="filmInfo">
+                <p>{{ s.date }}</p>
+                <p>Початок: {{ s.start_time }}</p>
+                <p>Кінець: {{ s.end_time }}</p>
+            </article>
+            <p class="Seats">Вільні місця</p>
+            <article class="movie-button">
+                {% for seat in s.seats %}
+                    <button>{{ seat }}</button>
+                {% endfor %}
+            </article>
         </div>
     {% endfor %}
 </div>
