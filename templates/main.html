@@ -35,6 +35,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             background-color: #fafffe;
             transition: background-image 0.3s ease, transform 0.3s ease;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
 
@@ -42,6 +46,7 @@
             background-image: linear-gradient(to bottom right, #5EFCE8, #736EFE);
             cursor: pointer;
             transform: scale(1.05);
+
         }
 
         .movie-card h2 {
@@ -61,6 +66,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+
         }
 
         .movie-button button {
@@ -168,10 +174,10 @@
                 max-width: calc(50% - 20px);
             }
             .movie-card h2 {
-                font-size: 14px;
+                font-size: 20px;
             }
             .movie-card p {
-                font-size: 10px;
+                font-size: 16px;
             }
         }
 
@@ -181,7 +187,10 @@
                 max-width: calc(100% - 20px);
             }
             .movie-card h2 {
-                font-size: 12px;
+                font-size: 20px;
+            }
+            .movie-card p {
+                font-size: 16px;
             }
         }
 
@@ -252,6 +261,8 @@
     <div class="movie-card">
         <h2>{{ s.title }}</h2>
         <article class="filmInfo">
+            <p>м.Вінниця</p>
+            <p>вул.Хмельницьке шосе, 95</p>
             <p>{{ s.date }}</p>
             <p>Початок: {{ s.start_time }}</p>
             <p>Кінець: {{ s.end_time }}</p>

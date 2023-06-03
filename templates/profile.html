@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Профіль</title>
+
+  <style>
+    body {
+      background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
+      height: 100vh;
+    }
+    h1  {
+      text-align: center;
+    }
+    .burger-menu {
+      display: block;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      cursor: pointer;
+    }
+
+    .burger-menu span {
+      display: block;
+      width: 30px;
+      height: 4px;
+      margin-bottom: 5px;
+      background-color: black;
+      transition: transform 0.3s ease;
+    }
+
+    .burger-menu.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .burger-menu.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .burger-menu.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    .menu-items {
+      display: none;
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      z-index: 998;
+    }
+
+    .menu-items.open {
+      display: block;
+    }
+
+    .menu-items a {
+      display: block;
+      margin-bottom: 10px;
+      color: black;
+      text-decoration: none;
+    }
+    .TicketInfo {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .YourTicketInfo {
+      background-color: white;
+      width: calc(30% - 20px);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .YourTicketInfo:hover {
+      transform: scale(1.05);
+      background-image: linear-gradient(to bottom right, #5EFCE8, #736EFE);
+    }
+
+
+  </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      const burgerMenu = document.querySelector('.burger-menu');
+      const menuItems = document.querySelector('.menu-items');
+
+      burgerMenu.addEventListener('click', function() {
+        burgerMenu.classList.toggle('open');
+        menuItems.classList.toggle('open');
+      });
+    });
+  </script>
+</head>
+<header>
+  <div class="burger-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <nav class="menu-items">
+    <!-- Add your menu items here -->
+    <a href="/login">Вхід</a>
+    <a href="/register">Реєстрація</a>
+    <a href="#">Вихід</a>
+    <a href="#">Профіль</a>
+    <a href="/">Головна</a>
+  </nav>
+</header>
+<body>
+  <h1>Ваші квитки</h1>
+  <div class="TicketInfo">
+    <!--{Логика}-->
+      <article class="YourTicketInfo">
+        <p>Ваше місце: № <!--{Логика для отображения всех мест куплених на один фильм}--> </p>
+        <p>Дата сеансу: {{ s.date }}</p>
+        <p>Початок: {{ s.start_time }}</p>
+        <p>Кінець: {{ s.end_time }}</p>
+      </article>
+    <!--{конец логики}-->
+  </div>
+</body>
+<footer>
+
+</footer>
+</html>
