@@ -32,7 +32,7 @@
         }
 
         .movie-card:hover {
-            background-color: aquamarine; /* Change the hover background color as desired */
+            background-color: aquamarine;
             cursor: pointer;
             transform: scale(1.05);
         }
@@ -66,7 +66,7 @@
         }
 
         .movie-button button.active {
-            background-color: aquamarine; /* Change the active button background color as desired */
+            background-color: aquamarine;
         }
 
         .filmInfo {
@@ -95,6 +95,7 @@
             height: 30px;
             background-color: white;
         }
+
     </style>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
@@ -109,6 +110,13 @@
                         button.classList.toggle('active');
                         updateBuyTicketBtnText();
                     });
+                });
+
+                movieContainer.addEventListener('mouseleave', function() {
+                    buttons.forEach(function(button) {
+                        button.classList.remove('active');
+                    });
+                    updateBuyTicketBtnText();
                 });
 
                 function updateBuyTicketBtnText() {
