@@ -10,6 +10,7 @@
             padding: 20px;
             background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
         }
+
         h1 {
             text-align: center;
             color: black;
@@ -19,10 +20,15 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .movie-card {
-            width: 250px;
+            flex: 0 0 calc(25% - 20px);
+            max-width: calc(25% - 20px);
             border-radius: 10px;
             padding: 20px;
             margin: 10px;
@@ -30,6 +36,7 @@
             background-color: #fafffe;
             transition: background-image 0.3s ease, transform 0.3s ease;
         }
+
 
         .movie-card:hover {
             background-image: linear-gradient(to bottom right, #5EFCE8, #736EFE);
@@ -90,6 +97,7 @@
             padding-top: 10px;
             transition: transform 0.3s ease;
         }
+
         .BuyTicket button {
             border-radius: 10px;
             border-width: 1px;
@@ -99,6 +107,82 @@
 
         .BuyTicket:hover {
             transform: scale(1.05);
+        }
+
+        .burger-menu {
+            display: block;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            cursor: pointer;
+        }
+
+        .burger-menu span {
+            display: block;
+            width: 30px;
+            height: 4px;
+            margin-bottom: 5px;
+            background-color: black;
+            transition: transform 0.3s ease;
+        }
+
+        .burger-menu.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger-menu.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .menu-items {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+        }
+
+        .menu-items.open {
+            display: block;
+        }
+
+        .menu-items a {
+            display: block;
+            margin-bottom: 10px;
+            color: black;
+            text-decoration: none;
+        }
+
+        @media (max-width: 1200px) {
+            .movie-card {
+                flex: 0 0 calc(50% - 20px);
+                max-width: calc(50% - 20px);
+            }
+            .movie-card h2 {
+                font-size: 14px;
+            }
+            .movie-card p {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .movie-card {
+                flex: 0 0 calc(100% - 20px);
+                max-width: calc(100% - 20px);
+            }
+            .movie-card h2 {
+                font-size: 12px;
+            }
         }
 
     </style>
@@ -134,8 +218,32 @@
                 }
             });
         });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const burgerMenu = document.querySelector('.burger-menu');
+            const menuItems = document.querySelector('.menu-items');
+
+            burgerMenu.addEventListener('click', function() {
+                burgerMenu.classList.toggle('open');
+                menuItems.classList.toggle('open');
+            });
+        });
     </script>
 </head>
+<header>
+    <div class="burger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <nav class="menu-items">
+        <!-- Add your menu items here -->
+        <a href="/login">Вхід</a>
+        <a href="/register">Реєстрація</a>
+        <a href="#">Вихід</a>
+        <a href="#">Профіль</a>
+    </nav>
+</header>
 <body>
 <h1>Розклад сеансів</h1>
 <div class="movie-container">
