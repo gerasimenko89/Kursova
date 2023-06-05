@@ -59,6 +59,8 @@ class Tickets(db.Model):
         return f"Tickets({self.id}, {self.title}, {self.date}, {self.start_time}, {self.end_time}, {eval(self.seats)}, {self.user_id})"
 
 
+from sqlalchemy import inspect
+
 class TicketsView(ModelView):
     with app.app_context():
         column_searchable_list = ['title', 'date', 'start_time', 'end_time', 'seats', 'user_id']
@@ -68,10 +70,12 @@ class TicketsView(ModelView):
         column_default_sort = ('title', True)
         column_exclude_list = ['user_id']
         column_display_pk = True
-        users = users.query.all()
-        column_choices = {
-            'user_id': [(user.id, user.email) for user in users]
-        }
+        # Check if the 'users' table exists
+        if inspect(db.engine).has_table("users"):
+            column_choices = {
+                'user_id': [(user.id, user.email) for user in users.query.all()]
+            }
+
 
 
 admin.add_view(ModelView(Schedule, db.session))
@@ -165,14 +169,15 @@ def buy_ticket(id):
     seeats = request.form.getlist('seat')
     for i in range(len(seeats)):
         seeats[i] = int(seeats[i])
-    #return seeats
+    # return seeats
     for i in seeats:
         if i not in seats:
             return redirect(url_for('main'))
     for i in seeats:
         seats.remove(i)
-        ticket = Tickets(title=schedule.title, date=schedule.date, start_time=schedule.start_time, end_time=schedule.end_time,
-                seats=str(i), user=user)
+        ticket = Tickets(title=schedule.title, date=schedule.date, start_time=schedule.start_time,
+                         end_time=schedule.end_time,
+                         seats=str(i), user=user)
         db.session.add(ticket)
     schedule.seats = str(seats)
     db.session.commit()
@@ -226,6 +231,12 @@ def populate_schedule():
 
     # Commit the changes to the database
     db.session.commit()
+
+
+@app.route("/fill")
+def fill():
+    populate_schedule()
+    return redirect(url_for('main'))
 
 
 if __name__ == '__main__':
