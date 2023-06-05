@@ -1,11 +1,13 @@
 import os
 from datetime import datetime
-from random import randint
-
 from flask import Flask, request, render_template, redirect, url_for
+from flask import current_app
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from random import randint
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
@@ -14,23 +16,34 @@ app.config["DEBUG"] = True
 app.config["FLASK_DEBUG"] = True
 app.config["SECRET_KEY"] = os.urandom(24)
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 admin = Admin(app)
 
 
-# function to generate token
-def generate_token():
-    import uuid
-    return uuid.uuid4().hex
-
-
-class users(db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
-    token = db.Column(db.String(80))
+
+    def get_id(self):
+        return self.id
+
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def __repr__(self):
+        return f"User(id='{self.id}', username='{self.username}', password='{self.password}',, secret_code='{self.secret_code}', sesionValidTo='{self.sesionValidTo}', codeToConfirmEmail='{self.codeToConfirmEmail}', isEmailConfirmed='{self.isEmailConfirmed}', is_admin='{self.is_admin}')"
 
     def __repr__(self) -> str:
-        return f"{self.id} - {self.email} - {self.token}"
+        return f"{self.id} - {self.email}"
 
 
 class Schedule(db.Model):
@@ -52,14 +65,15 @@ class Tickets(db.Model):
     start_time = db.Column(db.String(80))
     end_time = db.Column(db.String(80))
     seats = db.Column(db.String(150))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('users', backref=db.backref('tickets', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('tickets', lazy=True))
 
     def __repr__(self):
         return f"Tickets({self.id}, {self.title}, {self.date}, {self.start_time}, {self.end_time}, {eval(self.seats)}, {self.user_id})"
 
 
 from sqlalchemy import inspect
+
 
 class TicketsView(ModelView):
     with app.app_context():
@@ -70,17 +84,31 @@ class TicketsView(ModelView):
         column_default_sort = ('title', True)
         column_exclude_list = ['user_id']
         column_display_pk = True
-        # Check if the 'users' table exists
-        if inspect(db.engine).has_table("users"):
+        # Check if the 'User' table exists
+        if inspect(db.engine).has_table("User"):
             column_choices = {
-                'user_id': [(user.id, user.email) for user in users.query.all()]
+                'user_id': [(user.id, user.email) for user in User.query.all()]
             }
 
 
+@app.route('/admin')
+@login_required
+def adm():
+    if current_user.is_authenticated:
+        return redirect(url_for('admin.index'))
+    else:
+        return redirect(url_for('login'))
+
 
 admin.add_view(ModelView(Schedule, db.session))
-admin.add_view(ModelView(users, db.session))
+admin.add_view(ModelView(User, db.session))
 admin.add_view(TicketsView(Tickets, db.session))
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Implement the logic to load the User from your database or other source
+    return User.query.get(user_id)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -89,16 +117,11 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        user = users.query.filter_by(email=email).first()
-        if user:
-            if user.password == password:
-                token = generate_token()
-                user.token = token
-                db.session.commit()
-                # add cookie
+        cr_user = User.query.filter_by(email=email).first()
+        if cr_user:
+            if cr_user.password == password:
+                login_user(cr_user)
                 response = redirect(url_for('main'))
-                response.set_cookie('token', token)
-                response.set_cookie('email', user.email)
                 return response
             else:
                 return "Wrong password"
@@ -114,16 +137,18 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        user = users.query.filter_by(email=email).first()
-        if user:
+        cur_us = User.query.filter_by(email=email).first()
+        if cur_us:
             return "User already exists"
         else:
-            new_user = users(email=email, password=password, token=generate_token())
+            new_user = User(email=email, password=password)
             db.session.add(new_user)
             db.session.commit()
-            # add cookie
+
+            login_user(new_user)  # Log in the newly registered User
+
+            # Add cookies
             response = redirect(url_for('main'))
-            response.set_cookie('token', new_user.token)
             response.set_cookie('email', new_user.email)
             return response
 
@@ -140,60 +165,44 @@ def styles(name):
 
 
 @app.route("/profile")
+@login_required
 def profile():
-    token = request.cookies.get('token')
-    if not token:
-        return redirect(url_for('login'))
-    user = users.query.filter_by(token=token).first()
-    if user is None:
-        return redirect(url_for('login'))
-    tickets = Tickets.query.filter_by(user_id=user.id).all()
+    tickets = Tickets.query.filter_by(user_id=current_user.id).all()
     return render_template('profile.html', tickets=tickets)
 
 
 @app.route("/buy_ticket/<id>", methods=['POST'])
+@login_required
 def buy_ticket(id):
-    token = request.cookies.get('token')
-    username = request.cookies.get('email')
-    if not token or not username:
-        return redirect(url_for('login'))
-    user = users.query.filter_by(token=token).first()
-    if user is None:
-        return redirect(url_for('login'))
-    if user.token != token:
-        return redirect(url_for('login'))
     schedule = Schedule.query.filter_by(id=id).first()
     if schedule is None:
         return redirect(url_for('main'))
+
     seats = eval(schedule.seats)
-    seeats = request.form.getlist('seat')
-    for i in range(len(seeats)):
-        seeats[i] = int(seeats[i])
-    # return seeats
-    for i in seeats:
-        if i not in seats:
+    selected_seats = request.form.getlist('seat')
+    selected_seats = [int(seat) for seat in selected_seats]
+
+    # Check if selected seats are valid
+    for seat in selected_seats:
+        if seat not in seats:
             return redirect(url_for('main'))
-    for i in seeats:
-        seats.remove(i)
+
+    # Remove selected seats from available seats
+    for seat in selected_seats:
+        seats.remove(seat)
         ticket = Tickets(title=schedule.title, date=schedule.date, start_time=schedule.start_time,
-                         end_time=schedule.end_time,
-                         seats=str(i), user=user)
+                         end_time=schedule.end_time, seats=str(seat), user=current_user)
         db.session.add(ticket)
+
     schedule.seats = str(seats)
     db.session.commit()
     return redirect(url_for('profile'))
 
 
 @app.route("/")
+@login_required
 def main():
     schedule = Schedule.query.all()
-    username = request.cookies.get('email')
-    token = request.cookies.get('token')
-    if not token or not username:
-        return redirect(url_for('login'))
-    user = users.query.filter_by(token=token).first()
-    if user is None:
-        return redirect(url_for('login'))
     movies = []
     for i in schedule:
         movies.append({
