@@ -5,6 +5,7 @@ body {
     background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
 }
 
+
 h1 {
     text-align: center;
     color: black;
@@ -16,6 +17,7 @@ form {
     justify-content: center;
     align-items: center;
 }
+
 
 .movie-container {
     display: flex;
