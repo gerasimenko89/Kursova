@@ -211,7 +211,7 @@ input[type=checkbox]:checked {
 .checkbox-label span {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 53%;
     transform: translate(-50%, -50%);
     transform-origin: center;
     z-index: 1;
