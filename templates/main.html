@@ -39,6 +39,35 @@
         });
 
         window.addEventListener('DOMContentLoaded', function () {
+            const movieContainers = document.querySelectorAll('.movie-card');
+
+            movieContainers.forEach(function (movieContainer) {
+                const checkboxes = movieContainer.querySelectorAll('input[type="checkbox"]');
+                const buyTicketBtn = movieContainer.querySelector('button[type="submit"]');
+
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.addEventListener('change', function () {
+                        updateBuyTicketBtnText();
+                    });
+                });
+
+                movieContainer.addEventListener('mouseleave', function () {
+                    checkboxes.forEach(function (checkbox) {
+                        checkbox.checked = false;
+                    });
+                    updateBuyTicketBtnText();
+                });
+
+                function updateBuyTicketBtnText() {
+                    const selectedCheckboxes = movieContainer.querySelectorAll('input[type="checkbox"]:checked');
+                    if (selectedCheckboxes.length >= 2) {
+                        buyTicketBtn.textContent = 'Купити квитки';
+                    } else {
+                        buyTicketBtn.textContent = 'Купити квиток';
+                    }
+                }
+            });
+
             const burgerMenu = document.querySelector('.burger-menu');
             const menuItems = document.querySelector('.menu-items');
 
@@ -47,6 +76,7 @@
                 menuItems.classList.toggle('open');
             });
         });
+
     </script>
 </head>
 <header>
@@ -57,14 +87,11 @@
     </div>
     <nav class="menu-items">
         <!-- Add your menu items here -->
-        <a href="/login">Вхід</a>
-        <a href="/register">Реєстрація</a>
-        <a href="#">Вихід</a>
         <a href="/profile">Профіль</a>
-        <a href="/">Головна</a>
     </nav>
 </header>
 <body>
+
 <h1>Розклад сеансів</h1>
 <div class="movie-container">
     {{ message }}
@@ -80,20 +107,25 @@
             </article>
             <p class="Seats">Вільні місця</p>
             <form method="POST" action="/buy_ticket/{{ s.id }}">
-                <div style="display: flex; flex-wrap: wrap;">
+                <div class="SeatsButton">
                     {% for seat in range(1, 17) %}
-                        {% if seat not in s.seats %}
-                            <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}"
-                                   class="checkbox-button" disabled style="margin-right: 10px;">
-                        {% else %}
-                            <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}"
-                                   class="checkbox-button" style="margin-right: 10px;">
-                        {% endif %}
+                    {% if seat not in s.seats %}
+                    <label for="seat-{{ seat }}" class="CheckboxDisable">
+                        <span>{{ seat }}</span>
+                        <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}" disabled>
+                    </label>
+                    {% else %}
+                    <label for="seat-{{ seat }}" class="checkbox-label">
+                        <span>{{ seat }}</span>
+                        <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}">
+                    </label>
+                    {% endif %}
                     {% endfor %}
                 </div>
                 <br>
-                <button type="submit">Купити квиток</button>
+                <button class="BuyTicketButton" type="submit">Купити квиток</button>
             </form>
+
 
 
         </div>
