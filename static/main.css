@@ -3,6 +3,8 @@ body {
     margin: 0;
     padding: 20px;
     background-image: linear-gradient(to top left, #29cdf8, #37f877, #f4ff4a);
+    user-select: none;
+    min-width: 250px;
 }
 
 
@@ -145,11 +147,77 @@ form {
 .SeatsButton {
     text-align: center;
     align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .CheckboxDisable {
     display: none;
 }
+
+input[type=checkbox] {
+    position: relative;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    transform: scale(1);
+    transition: transform 0.2s;
+}
+
+input[type=checkbox]:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 2px solid #555555;
+    border-radius: 3px;
+    background-color: white;
+    height: 30px;
+    width: 30px;
+    transition: background-color 0.2s;
+}
+
+input[type=checkbox]:checked:before {
+    background-color: green;
+}
+
+input[type=checkbox]:checked:after {
+    display: block;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+input[type=checkbox]:checked {
+    transform: scale(0.95);
+}
+
+
+.checkbox-label {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.checkbox-label span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    z-index: 1;
+    pointer-events: none;
+}
+
 
 
 @media (max-width: 1200px) {
