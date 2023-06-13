@@ -21,44 +21,13 @@
             const movieContainers = document.querySelectorAll('.movie-card');
 
             movieContainers.forEach(function (movieContainer) {
-                const buttons = movieContainer.querySelectorAll('.movie-button button');
-                const buyTicketBtn = movieContainer.querySelector('.BuyTicket button');
-
-                buttons.forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        button.classList.toggle('active');
-                        updateBuyTicketBtnText();
-                    });
-                });
-
-                movieContainer.addEventListener('mouseleave', function () {
-                    buttons.forEach(function (button) {
-                        button.classList.remove('active');
-                    });
-                    updateBuyTicketBtnText();
-                });
-
-                function updateBuyTicketBtnText() {
-                    const activeButtons = movieContainer.querySelectorAll('.movie-button button.active');
-                    if (activeButtons.length >= 2) {
-                        buyTicketBtn.textContent = 'Купити квитки';
-                    } else {
-                        buyTicketBtn.textContent = 'Купити квиток';
-                    }
-                }
-            });
-        });
-
-        window.addEventListener('DOMContentLoaded', function () {
-            const movieContainers = document.querySelectorAll('.movie-card');
-
-            movieContainers.forEach(function (movieContainer) {
                 const checkboxes = movieContainer.querySelectorAll('input[type="checkbox"]');
                 const buyTicketBtn = movieContainer.querySelector('button[type="submit"]');
 
                 checkboxes.forEach(function (checkbox) {
                     checkbox.addEventListener('change', function () {
                         updateBuyTicketBtnText();
+                        limitCheckboxSelections();
                     });
                 });
 
@@ -67,6 +36,7 @@
                         checkbox.checked = false;
                     });
                     updateBuyTicketBtnText();
+                    limitCheckboxSelections();
                 });
 
                 function updateBuyTicketBtnText() {
@@ -77,6 +47,23 @@
                         buyTicketBtn.textContent = 'Купити квиток';
                     }
                 }
+
+                function limitCheckboxSelections() {
+                    const selectedCheckboxes = movieContainer.querySelectorAll('input[type="checkbox"]:checked');
+                    if (selectedCheckboxes.length >= 2) {
+                        checkboxes.forEach(function (checkbox) {
+                            if (!checkbox.checked) {
+                                checkbox.disabled = true;
+                            }
+                        });
+                    } else {
+                        checkboxes.forEach(function (checkbox) {
+                            checkbox.disabled = false;
+                        });
+                    }
+                }
+
+                limitCheckboxSelections();
             });
 
             const burgerMenu = document.querySelector('.burger-menu');
@@ -87,7 +74,6 @@
                 menuItems.classList.toggle('open');
             });
         });
-
     </script>
 </head>
 <header>
@@ -108,35 +94,35 @@
     {% for s in schedule %}
     {% set hasSchedule = true %}
     <div class="movie-card">
-            <h2>{{ s.title }}</h2>
-            <article class="filmInfo">
-                <p>м.Вінниця</p>
-                <p>вул.Хмельницьке шосе, 95</p>
-                <p>{{ s.date }}</p>
-                <p>Початок: {{ s.start_time }}</p>
-                <p>Кінець: {{ s.end_time }}</p>
-            </article>
-            <p class="Seats">Вільні місця</p>
-            <form method="POST" action="/buy_ticket/{{ s.id }}">
-                <div class="SeatsButton">
-                    {% for seat in range(1, 17) %}
-                    {% if seat not in s.seats %}
-                    <label for="seat-{{ seat }}" class="CheckboxDisable">
-                        <span>{{ seat }}</span>
-                        <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}" disabled>
-                    </label>
-                    {% else %}
-                    <label for="seat-{{ seat }}" class="checkbox-label">
-                        <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}">
-                        <span>{{ seat }}</span>
-                    </label>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-                <br>
-                <button class="BuyTicketButton" type="submit">Купити квиток</button>
-            </form>
-        </div>
+        <h2>{{ s.title }}</h2>
+        <article class="filmInfo">
+            <p>м.Вінниця</p>
+            <p>вул.Хмельницьке шосе, 95</p>
+            <p>{{ s.date }}</p>
+            <p>Початок: {{ s.start_time }}</p>
+            <p>Кінець: {{ s.end_time }}</p>
+        </article>
+        <p class="Seats">Вільні місця</p>
+        <form method="POST" action="/buy_ticket/{{ s.id }}">
+            <div class="SeatsButton">
+                {% for seat in range(1, 17) %}
+                {% if seat not in s.seats %}
+                <label for="seat-{{ seat }}" class="CheckboxDisable">
+                    <span>{{ seat }}</span>
+                    <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}" disabled>
+                </label>
+                {% else %}
+                <label for="seat-{{ seat }}" class="checkbox-label">
+                    <input type="checkbox" name="seat" value="{{ seat }}" id="seat-{{ seat }}">
+                    <span>{{ seat }}</span>
+                </label>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <br>
+            <button class="BuyTicketButton" type="submit">Купити квиток</button>
+        </form>
+    </div>
     {% endfor %}
 </div>
 </body>
