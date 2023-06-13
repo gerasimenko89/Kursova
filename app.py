@@ -15,6 +15,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG"] = True
 app.config["FLASK_DEBUG"] = True
 app.config["SECRET_KEY"] = os.urandom(24)
+
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -22,7 +23,7 @@ login_manager.login_view = 'login'
 admin = Admin(app)
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
@@ -33,12 +34,6 @@ class User(db.Model):
 
     def is_active(self):
         return True
-
-    def is_authenticated(self):
-        return True
-
-    def is_anonymous(self):
-        return False
 
     def __repr__(self) -> str:
         return f"{self.id} - {self.email}"
@@ -92,15 +87,22 @@ class TicketsView(ModelView):
 @app.route('/admin')
 @login_required
 def adm():
-    if current_user.is_authenticated and current_user.admin:
+    if current_user.is_anonymous and current_user.admin:
         return redirect(url_for('admin.index'))
     else:
         return redirect(url_for('login'))
 
+class viewModel(ModelView):
+    def is_accessible(self):
+        return not current_user.is_anonymous and current_user.admin
 
-admin.add_view(ModelView(Schedule, db.session))
-admin.add_view(ModelView(User, db.session))
-admin.add_view(TicketsView(Tickets, db.session))
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+
+admin.add_view(viewModel(Schedule, db.session))
+admin.add_view(viewModel(User, db.session))
+admin.add_view(viewModel(Tickets, db.session))
 
 
 @login_manager.user_loader
@@ -215,6 +217,9 @@ def main():
 
 
 def populate_schedule():
+    admin = User(email="admin@admin.com", password="111", admin=True)
+    db.session.add(admin)
+    db.session.commit()
     film_titles = [
         "Iron Man",
         "Captain America: The First Avenger",
@@ -222,8 +227,6 @@ def populate_schedule():
         "The Avengers",
         "Guardians of the Galaxy"
     ]
-
-    # Generate 5 sessions for the Marvel films
     for i in range(5):
         title = film_titles[i]
         date = datetime.now().strftime("%Y-%m-%d")
