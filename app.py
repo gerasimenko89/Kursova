@@ -26,6 +26,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
+    admin = db.Column(db.Boolean, default=False)
 
     def get_id(self):
         return self.id
@@ -38,9 +39,6 @@ class User(db.Model):
 
     def is_anonymous(self):
         return False
-
-    def __repr__(self):
-        return f"User(id='{self.id}', username='{self.username}', password='{self.password}',, secret_code='{self.secret_code}', sesionValidTo='{self.sesionValidTo}', codeToConfirmEmail='{self.codeToConfirmEmail}', isEmailConfirmed='{self.isEmailConfirmed}', is_admin='{self.is_admin}')"
 
     def __repr__(self) -> str:
         return f"{self.id} - {self.email}"
@@ -94,7 +92,7 @@ class TicketsView(ModelView):
 @app.route('/admin')
 @login_required
 def adm():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and current_user.admin:
         return redirect(url_for('admin.index'))
     else:
         return redirect(url_for('login'))
@@ -240,6 +238,12 @@ def populate_schedule():
 
     # Commit the changes to the database
     db.session.commit()
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 
 @app.route("/fill")

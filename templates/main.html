@@ -83,13 +83,15 @@
         <span></span>
     </div>
     <nav class="menu-items">
+        <a href="/">Головна</a>
         <a href="/profile">Профіль</a>
+        <a href="/logout">Вийти</a>
     </nav>
 </header>
 <body>
 <h1>Розклад сеансів</h1>
+<h1>{{ messages }}</h1>
 <div class="movie-container">
-    {{ message }}
     {% set hasSchedule = false %}
     {% for s in schedule %}
     {% set hasSchedule = true %}
