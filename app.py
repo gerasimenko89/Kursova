@@ -7,6 +7,8 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_login import login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
+#init migration
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
@@ -19,7 +21,9 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+migration = Migrate(app, db)
 admin = Admin(app)
+
 
 
 class User(UserMixin, db.Model):
@@ -150,8 +154,8 @@ def register():
             login_user(new_user)
             response = redirect(url_for('main'))
             return response
-
-    return render_template('register.html')
+    else:
+        return render_template('register.html')
 
 
 @app.route("/static/<name>")

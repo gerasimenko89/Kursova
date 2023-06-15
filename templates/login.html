@@ -7,10 +7,10 @@
     <title>Вхід</title>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const burgerMenu = document.querySelector('.burger-menu');
             const menuItems = document.querySelector('.menu-items');
-            burgerMenu.addEventListener('click', function() {
+            burgerMenu.addEventListener('click', function () {
                 burgerMenu.classList.toggle('open');
                 menuItems.classList.toggle('open');
             });
@@ -18,27 +18,28 @@
     </script>
 </head>
 <body class="Main">
-    <form method="POST" action="/login">
-        <h1>Вхід</h1>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flash-messages">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <label>
-            <input type="email" name="email" placeholder="Введіть пошту">
-        </label>
-        <label>
-            <input type="password" name="password" placeholder="Введіть пароль"/>
-        </label>
-        <input type="hidden" name="type" value="login">
-        <button type="submit">Увійти</button>
-        <a href="/register">Реєстрація</a>
-    </form>
+<form method="POST" action="/login">
+    <h1>Вхід</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <label>
+        <input type="email" name="email" placeholder="Введіть пошту">
+    </label>
+    <label>
+        <input type="password" name="password" placeholder="Введіть пароль"/>
+    </label>
+    <input type="hidden" name="type" value="login">
+    <button type="submit">Увійти</button>
+    <a href="/register">Реєстрація</a>
+</form>
 </body>
 <footer>
 
