@@ -20,15 +20,6 @@
 <body class="Main">
 <form method="POST" action="/login">
     <h1>Вхід</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="flash-messages">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
 
     <label>
         <input type="email" name="email" placeholder="Введіть пошту">
@@ -38,6 +29,15 @@
     </label>
     <input type="hidden" name="type" value="login">
     <button type="submit">Увійти</button>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <div>{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <a href="/register">Реєстрація</a>
 </form>
 </body>
