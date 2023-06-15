@@ -17,6 +17,19 @@
       });
     });
   </script>
+
+    <style>
+        {% if schedule %}
+        body {
+            height: 100%;
+        }
+        {% else %}
+        body {
+            height: 100vh;
+        }
+        {% endif %}
+    </style>
+
 </head>
 
 <header>

@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for
-from flask import current_app
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -28,12 +27,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
     admin = db.Column(db.Boolean, default=False)
-
-    def get_id(self):
-        return self.id
-
-    def is_active(self):
-        return True
 
     def __repr__(self) -> str:
         return f"{self.id} - {self.email}"
@@ -113,6 +106,9 @@ def load_user(user_id):
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -124,36 +120,38 @@ def login():
                 response = redirect(url_for('main'))
                 return response
             else:
-                return "Wrong password"
+                flash("Не вірний логін або пароль")
+                return redirect(url_for('login'))
         else:
-            return "User not found"
+            flash("Не вірний логін або пароль")
+            return redirect(url_for('login'))
     else:
         return render_template('login.html')
 
 
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
 
-        cur_us = User.query.filter_by(email=email).first()
-        if cur_us:
-            return "User already exists"
+        cur_user = User.query.filter_by(email=email).first()
+        if cur_user:
+            flash("Користувач вже існує", "error")
+            return redirect(url_for('register'))
         else:
             new_user = User(email=email, password=password)
             db.session.add(new_user)
             db.session.commit()
-
-            login_user(new_user)  # Log in the newly registered User
-
-            # Add cookies
+            login_user(new_user)
             response = redirect(url_for('main'))
-            response.set_cookie('email', new_user.email)
             return response
 
-    else:
-        return render_template('register.html')
+    return render_template('register.html')
 
 
 @app.route("/static/<name>")
@@ -202,6 +200,7 @@ def buy_ticket(id):
 @app.route("/")
 @login_required
 def main():
+
     schedule = Schedule.query.all()
     movies = []
     for i in schedule:
